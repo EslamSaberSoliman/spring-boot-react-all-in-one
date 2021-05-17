@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ${namespace}
+---  
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${appname}
+  namespace: ${namespace}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ${appname}
+  template:
+    metadata:
+      labels:
+        app: ${appname}
+    spec:
+      containers:
+      - name: ${appname}
+        image: ${imagename}:${BUILD_NUMBER}
+        ports:
+        - containerPort: 8080
+---
+kind: Service 
+apiVersion: v1 
+metadata:
+  name: ${servicename}
+  namespace: ${namespace} 
+spec:
+  type: ${servicetype}
+  selector:
+    app: ${appname}
+  ports:
+    - port: 8080 
+      nodePort: 30098
+      targetPort: 8080

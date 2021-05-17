@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ${namespace}-${branch}
+---  
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${appname}-${branch}
+  namespace: ${namespace}-${branch}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ${appname}-${branch}
+  template:
+    metadata:
+      labels:
+        app: ${appname}-${branch}
+    spec:
+      containers:
+      - name: ${appname}-${branch}
+        image: ${imagename}_${branch}:${BUILD_NUMBER}
+        ports:
+        - containerPort: 8080
+---
+kind: Service 
+apiVersion: v1 
+metadata:
+  name: ${servicename}-${branch}
+  namespace: ${namespace}-${branch}
+spec:
+  type: ${servicetype}
+  selector:
+    app: ${appname}-${branch}
+  ports:
+    - port: 8080 
+      targetPort: 8080
